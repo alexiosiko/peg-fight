@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cmr48yvwgtg7e"]
+
+[ext_resource type="Script" uid="uid://6q84ca2p7lk2" path="res://scripts/ball.gd" id="1_f6quk"]
+[ext_resource type="Texture2D" uid="uid://b5cfnbc8tcenh" path="res://sprites/ball.png" id="2_f6quk"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_iywne"]
+bounce = 10.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_swnuh"]
+
+[node name="Peg" type="RigidBody2D" unique_id=1126354782]
+physics_material_override = SubResource("PhysicsMaterial_iywne")
+gravity_scale = 0.5
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_f6quk")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=46769130]
+texture = ExtResource("2_f6quk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1561908888]
+visible = false
+shape = SubResource("CircleShape2D_swnuh")

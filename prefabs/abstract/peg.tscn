@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://6p42xb7nj7xu"]
+
+[ext_resource type="Script" uid="uid://b7kevpbxb7vuk" path="res://scripts/brick.gd" id="1_g4jk8"]
+[ext_resource type="Script" uid="uid://deq24ofko8kxa" path="res://scripts/board/brick/sprite.gd" id="3_aij7w"]
+
+[sub_resource type="Shader" id="Shader_g4jk8"]
+code = "shader_type canvas_item;
+
+uniform vec4 highlight_color : source_color = vec4(1.0, 1.0, 0.0, 1.0); // Defaults to yellow
+uniform bool highlight = false;
+
+void fragment() {
+    vec4 cur = COLOR;
+    
+    if (highlight) {
+        // 1. Calculate how \"bright\" the RGB channels are (ignoring alpha)
+        // A true black pixel will have an RGB sum of 0.0
+        float rgb_sum = cur.r + cur.g + cur.b;
+        
+        // 2. Create a smooth blending factor for anti-aliasing.
+        // If rgb_sum is 0.0, factor is 1.0 (fully yellow).
+        // As rgb_sum approaches 0.2, it smoothly fades out.
+        // GLSL colors range from 0.0 to 1.0, so 0.2 represents your threshold.
+        float blend_factor = smoothstep(1.0, 0.0, rgb_sum);
+        
+        // 3. Mix the original color with the highlight color based on the factor.
+        // We preserve the original alpha channel so anti-aliased transparency stays smooth.
+        vec3 final_rgb = mix(cur.rgb, highlight_color.rgb, blend_factor);
+        
+        COLOR = vec4(final_rgb, cur.a);
+    }
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vj7di"]
+shader = SubResource("Shader_g4jk8")
+shader_parameter/highlight_color = Color(1, 1, 0, 1)
+shader_parameter/highlight = false
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_swnuh"]
+
+[node name="Peg" type="StaticBody2D" unique_id=2077924220 node_paths=PackedStringArray("sprite", "label")]
+script = ExtResource("1_g4jk8")
+sprite = NodePath("Sprite2D")
+label = NodePath("Sprite2D/Label")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=448033917]
+material = SubResource("ShaderMaterial_vj7di")
+script = ExtResource("3_aij7w")
+
+[node name="Label" type="Label" parent="Sprite2D" unique_id=487365369]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -43.5
+offset_right = -12.0
+offset_bottom = -20.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "X5"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=102554915]
+shape = SubResource("RectangleShape2D_swnuh")
+
+[node name="HitCountTimer" type="Timer" parent="." unique_id=195501180]
+process_callback = 0
+wait_time = 0.5
+autostart = true
